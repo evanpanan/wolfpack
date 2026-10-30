@@ -63,3 +63,7 @@ node --check dist/app.js
 
 项目Logo引用该合约DEX Screener资料所展示的图标：
 https://cdn.dexscreener.com/cms/images/__G2dKANZJ92QtC3?fit=crop&format=auto&height=128&quality=95&width=128
+
+## 行情新鲜度与平台价差
+
+当前数据为DEX Screener返回的所选交易池参考价，不等于全市场统一报价。本接口未返回行情生成时间，因此成功获取不能确认报价新鲜度。页面明确标记“行情时间未核验”，并暂停吸筹判断，保留来源快照供参考。与OKX的价差可能涉及数据时点、池子或美元估值口径，尚未确定具体原因。当前没有接入OKX行情API，页面提供同合约OKX行情对照入口。

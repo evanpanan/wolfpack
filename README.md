@@ -67,3 +67,15 @@ https://cdn.dexscreener.com/cms/images/__G2dKANZJ92QtC3?fit=crop&format=auto&hei
 ## 行情新鲜度与平台价差
 
 当前数据为DEX Screener返回的所选交易池参考价，不等于全市场统一报价。本接口未返回行情生成时间，因此成功获取不能确认报价新鲜度。页面明确标记“行情时间未核验”，并暂停吸筹判断，保留来源快照供参考。与OKX的价差可能涉及数据时点、池子或美元估值口径，尚未确定具体原因。当前没有接入OKX行情API，页面提供同合约OKX行情对照入口。
+
+## 链上主价格
+
+主价格模块 `dist/chain-price.mjs` 直接读取 Robinhood 官方 RPC（https://rpc.mainnet.chain.robinhood.com），验证链 ID 4663，取得最新区块，在同一个区块号上读取两个 Uniswap V4 池的 getSlot0，计算 WOLFPACK → hXMAX → USDG。节点区块超过30秒、未来超过10秒、返回错误或区块哈希重组时拒绝报价；主价格不会静默回退到聚合器。
+
+WOLFPACK/hXMAX池：0x6042253a4cb13a33c83959ca75787197d7b211a4cd7d7ee0308140fbb52cbb58
+
+USDG/hXMAX池：0x4be9bdfcff70326169d9a871974f0e15d18d07ce424678c40aaeef295decb1ae
+
+计价单位为USDG，不假定其严格等于USD。展示池状态的中间价；两个池均有Hook，实际交易价格还涉及Hook、手续费和滑点，因此不称作可成交报价。主价格固定主池，与下方聚合器交易池选择独立。聚合器数据默认30秒更新，仅作对照。
+
+`dist/live-chain.mjs` 负责独立刷新、状态与近120个区块采样图。页面开启时目标每1秒读取，不重叠请求；节点限流和故障自动退避，关闭页面停止读取。
